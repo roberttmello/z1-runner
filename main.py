@@ -12,7 +12,11 @@ ground_surface = pygame.image.load('graphics/ground.png').convert()
 text_surface = font.render('Start Now!!!', False, 'black')
 
 snail_surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-snail_x_position = 600
+snail_rectangle = snail_surface.get_rect(midbottom=(600, 480))
+
+
+player_surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
+player_rectangle = player_surface.get_rect(midbottom=(80, 480))
 
 while True:  # Loop principal do jogo
     for event in pygame.event.get():  # Percorre uma lista de eventos
@@ -22,11 +26,15 @@ while True:  # Loop principal do jogo
 
     screen.blit(sky_surface, (0, 0))
     screen.blit(ground_surface, (0, 480))
-    screen.blit(text_surface, (540, 120))
-    screen.blit(snail_surface, (snail_x_position, 420))
-    snail_x_position -= 4
-    if snail_x_position <= -80:
-        snail_x_position = 1280
+    screen.blit(text_surface, (500, 120))
+    screen.blit(snail_surface, snail_rectangle)
+    screen.blit(player_surface, player_rectangle)
+    snail_rectangle.x -= 3
+    if snail_rectangle.right <= 0:
+        snail_rectangle.left = 1280
+    # player_rectangle.x += 3
+    # if player_rectangle.left >= 1280:
+    #     player_rectangle.right = 0
 
     pygame.display.update()  # Atualiza a tela com os elementos necessários
     clock.tick(60)  # Limita o loop principal a rodar no máximo há 60 fps
