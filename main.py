@@ -9,7 +9,10 @@ font = pygame.font.Font('font/pixeltype.ttf', 72)
 
 sky_surface = pygame.image.load('graphics/sky.png').convert()
 ground_surface = pygame.image.load('graphics/ground.png').convert()
-text_surface = font.render('Start Now!!!', False, 'black')
+
+score = 0
+score_surface = font.render(f'Score: {score}', False, '#404040')
+score_rectangle = score_surface.get_rect(center=(640, 80))
 
 snail_surface = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 snail_rectangle = snail_surface.get_rect(midbottom=(600, 480))
@@ -29,7 +32,8 @@ while True:
 
     screen.blit(sky_surface, (0, 0))
     screen.blit(ground_surface, (0, 480))
-    screen.blit(text_surface, (500, 120))
+    pygame.draw.rect(screen, '#c0e8ec', score_rectangle)
+    screen.blit(score_surface, score_rectangle)
     screen.blit(snail_surface, snail_rectangle)
     screen.blit(player_surface, player_rectangle)
     snail_rectangle.x -= 3
