@@ -30,11 +30,11 @@ while True:
             exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if player_rectangle.collidepoint(event.pos):
+            if player_rectangle.collidepoint(event.pos) and player_rectangle.bottom >= 480:
                 player_gravity = -20
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and player_rectangle.bottom >= 480:
                 player_gravity = -20
 
     screen.blit(sky_surface, (0, 0))
@@ -43,8 +43,11 @@ while True:
     screen.blit(score_surface, score_rectangle)
     screen.blit(snail_surface, snail_rectangle)
 
+    # Player
     player_gravity += 1
     player_rectangle.y += player_gravity
+    if player_rectangle.bottom >= 480:
+        player_rectangle.bottom = 480
     screen.blit(player_surface, player_rectangle)
 
     snail_rectangle.x -= 3
