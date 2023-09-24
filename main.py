@@ -7,6 +7,7 @@ def display_score():
     score_surface = font.render(f'Score:  {current_time}', False, '#404040')
     score_rectangle = score_surface.get_rect(center=(640, 80))
     screen.blit(score_surface, score_rectangle)
+    return current_time
 
 
 pygame.init()
@@ -14,9 +15,10 @@ screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Z1 RUNNER")
 clock = pygame.time.Clock()
 font = pygame.font.Font('font/pixeltype.ttf', 72)
-game_active = True
+game_active = False
 start_time = 0
 player_gravity = 0
+score = 0
 
 sky_surface = pygame.image.load('graphics/sky.png').convert()
 ground_surface = pygame.image.load('graphics/ground.png').convert()
@@ -27,6 +29,16 @@ snail_rectangle = snail_surface.get_rect(midbottom=(600, 480))
 player_surface = pygame.image.load('graphics/player/player_walk_1.png').convert_alpha()
 player_rectangle = player_surface.get_rect(midbottom=(80, 480))
 
+# Intro screen
+player_stand_surface = pygame.image.load('graphics/player/player_stand.png').convert_alpha()
+player_stand_surface = pygame.transform.rotozoom(player_stand_surface, 0, 3)
+player_stand_surface_rectangle = player_stand_surface.get_rect(center=(640, 360))
+
+game_name_surface = font.render('Z1 RUNNER', False, '#6fc4a9')
+game_name_surface_rectangle = game_name_surface.get_rect(center=(640, 180))
+
+game_message_surface = font.render(f'Press "SPACE" to run', False, '#6fc4a9')
+game_message_surface_rectangle = game_message_surface.get_rect(center=(640, 580))
 
 while True:
     for event in pygame.event.get():
@@ -52,7 +64,7 @@ while True:
         screen.blit(sky_surface, (0, 0))
         screen.blit(ground_surface, (0, 480))
         screen.blit(snail_surface, snail_rectangle)
-        display_score()
+        score = display_score()
 
         # Player
         player_gravity += 1
@@ -69,7 +81,20 @@ while True:
         if snail_rectangle.colliderect(player_rectangle):
             game_active = False
     else:
-        screen.fill('#ffbb00')
+        screen.fill('#5e81a2')
+        screen.blit(player_stand_surface, player_stand_surface_rectangle)
+
+        score_message_surface = font.render(f'Your score: {score}', False, '#6fc4a9')
+        score_message_surface_rectangle = score_message_surface.get_rect(center=(640, 580))
+        screen.blit(game_name_surface, game_name_surface_rectangle)
+
+        if score == 0:
+            screen.blit(game_message_surface, game_message_surface_rectangle)
+        else:
+            game_message_surface = font.render(f'Press "SPACE" to restart', False, '#6fc4a9')
+            game_message_surface_rectangle = game_message_surface.get_rect(center=(640, 660))
+            screen.blit(score_message_surface, score_message_surface_rectangle)
+            screen.blit(game_message_surface, game_message_surface_rectangle)
 
     pygame.display.update()
     clock.tick(60)
