@@ -1,17 +1,20 @@
 import pygame
 from sys import exit
 
+WIDTH = 1280
+HEIGHT = 720
+
 
 def display_score():
     current_time = (int(pygame.time.get_ticks() / 1000) - start_time)
     score_surface = font.render(f'Score:  {current_time}', False, '#444444')
-    score_rectangle = score_surface.get_rect(center=(640, 80))
+    score_rectangle = score_surface.get_rect(center=(WIDTH/2, 80))
     screen.blit(score_surface, score_rectangle)
     return current_time
 
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Z1 RUNNER")
 clock = pygame.time.Clock()
 font = pygame.font.Font('font/pixeltype.ttf', 64)
@@ -32,13 +35,13 @@ player_rectangle = player_surface.get_rect(midbottom=(80, 480))
 # Intro screen
 player_stand_surface = pygame.image.load('graphics/player/player_stand.png').convert_alpha()
 player_stand_surface = pygame.transform.rotozoom(player_stand_surface, 0, 3)
-player_stand_surface_rectangle = player_stand_surface.get_rect(center=(640, 360))
+player_stand_surface_rectangle = player_stand_surface.get_rect(center=(WIDTH/2, 360))
 
 game_name_surface = font.render('Z1 RUNNER', False, '#66ccaa')
-game_name_surface_rectangle = game_name_surface.get_rect(center=(640, 180))
+game_name_surface_rectangle = game_name_surface.get_rect(center=(WIDTH/2, 180))
 
 game_message_surface = font.render(f'Press "SPACE" to run', False, '#66ccaa')
-game_message_surface_rectangle = game_message_surface.get_rect(center=(640, 580))
+game_message_surface_rectangle = game_message_surface.get_rect(center=(WIDTH/2, 580))
 
 while True:
     for event in pygame.event.get():
@@ -57,7 +60,7 @@ while True:
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
-                snail_rectangle.left = 1280
+                snail_rectangle.left = WIDTH
                 start_time = int(pygame.time.get_ticks() / 1000)
 
     if game_active:
@@ -73,9 +76,9 @@ while True:
             player_rectangle.bottom = 480
         screen.blit(player_surface, player_rectangle)
 
-        snail_rectangle.x -= 8
+        snail_rectangle.x -= 10
         if snail_rectangle.right <= 0:
-            snail_rectangle.left = 1280
+            snail_rectangle.left = WIDTH
 
         # Collision
         if snail_rectangle.colliderect(player_rectangle):
@@ -85,14 +88,14 @@ while True:
         screen.blit(player_stand_surface, player_stand_surface_rectangle)
 
         score_message_surface = font.render(f'Your score: {score}', False, '#66ccaa')
-        score_message_surface_rectangle = score_message_surface.get_rect(center=(640, 580))
+        score_message_surface_rectangle = score_message_surface.get_rect(center=(WIDTH, 580))
         screen.blit(game_name_surface, game_name_surface_rectangle)
 
         if score == 0:
             screen.blit(game_message_surface, game_message_surface_rectangle)
         else:
             game_message_surface = font.render(f'Press "SPACE" to restart', False, '#66ccaa')
-            game_message_surface_rectangle = game_message_surface.get_rect(center=(640, 660))
+            game_message_surface_rectangle = game_message_surface.get_rect(center=(WIDTH, 660))
             screen.blit(score_message_surface, score_message_surface_rectangle)
             screen.blit(game_message_surface, game_message_surface_rectangle)
 
