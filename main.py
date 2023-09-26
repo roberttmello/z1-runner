@@ -2,14 +2,14 @@ import pygame
 from sys import exit
 from random import randint
 
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 1920
+HEIGHT = 1080
 
 
 def display_score():
     current_time = (int(pygame.time.get_ticks() / 1000) - start_time)
     score_surface = font.render(f'Score:  {current_time}', False, '#444444')
-    score_rectangle = score_surface.get_rect(center=(WIDTH/2, 80))
+    score_rectangle = score_surface.get_rect(center=(WIDTH/2, int(11.11 * HEIGHT / 100)))
     screen.blit(score_surface, score_rectangle)
     return current_time
 
@@ -44,7 +44,7 @@ def player_animation():
     if player_rectangle.bottom < int(66.67 * HEIGHT / 100):
         player_surface = player_jump
     else:
-        player_index += 0.1
+        player_index += 0.15
         if player_index >= len(player_walk):
             player_index = 0
         player_surface = player_walk[int(player_index)]
@@ -59,8 +59,14 @@ game_active = False
 start_time = 0
 score = 0
 
-sky_surface = pygame.image.load('graphics/sky.png').convert()
-ground_surface = pygame.image.load('graphics/ground.png').convert()
+# Load scene images
+if WIDTH == 1280:
+    sky_surface = pygame.image.load('graphics/sky-width_1280.png').convert()
+    ground_surface = pygame.image.load('graphics/ground-width_1280.png').convert()
+
+else:
+    sky_surface = pygame.image.load('graphics/sky-width_1920.png').convert()
+    ground_surface = pygame.image.load('graphics/ground-width_1920.png').convert()
 
 # ENEMIES
 # Snail
@@ -93,13 +99,13 @@ player_gravity = 0
 # Intro screen
 player_stand_surface = pygame.image.load('graphics/player/player_stand.png').convert_alpha()
 player_stand_surface = pygame.transform.rotozoom(player_stand_surface, 0, 3)
-player_stand_surface_rectangle = player_stand_surface.get_rect(center=(WIDTH/2, 360))
+player_stand_surface_rectangle = player_stand_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
 
 game_name_surface = font.render('Z1 RUNNER', False, '#66ccaa')
-game_name_surface_rectangle = game_name_surface.get_rect(center=(WIDTH/2, 180))
+game_name_surface_rectangle = game_name_surface.get_rect(center=(WIDTH/2, int(25 * HEIGHT / 100)))
 
-game_message_surface = font.render(f'Press "SPACE" to run', False, '#66ccaa')
-game_message_surface_rectangle = game_message_surface.get_rect(center=(WIDTH/2, 580))
+game_message_surface = font.render(f'Press  "SPACE"  to  START  or  "ESC"  to  exit!', False, '#66ccaa')
+game_message_surface_rectangle = game_message_surface.get_rect(center=(WIDTH/2, int(80.56 * HEIGHT / 100)))
 
 # Timers
 obstacle_timer = pygame.USEREVENT + 1
@@ -119,6 +125,11 @@ while True:
             pygame.quit()
             exit()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                exit()
+
         if game_active:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if player_rectangle.collidepoint(event.pos) and player_rectangle.bottom >= int(66.67 * HEIGHT / 100):
@@ -130,9 +141,11 @@ while True:
 
             if event.type == obstacle_timer:
                 if randint(0, 2):
-                    enemies_rectangle_list.append(snail_surface.get_rect(midbottom=(randint(1380, 1680), int(66.67 * HEIGHT / 100))))
+                    enemies_rectangle_list.append(snail_surface.get_rect(
+                        midbottom=(randint(WIDTH + 100, WIDTH + 400), int(66.67 * HEIGHT / 100))))
                 else:
-                    enemies_rectangle_list.append(fly_surface.get_rect(midbottom=(randint(1380, 1680), int(54.17 * HEIGHT / 100))))
+                    enemies_rectangle_list.append(fly_surface.get_rect(
+                        midbottom=(randint(WIDTH + 100, WIDTH + 400), int(54.17 * HEIGHT / 100))))
 
             if event.type == snail_animation_timer:
                 if snail_frame_index == 0:
@@ -179,13 +192,13 @@ while True:
         player_gravity = 0
 
         score_message_surface = font.render(f'Your score: {score}', False, '#66ccaa')
-        score_message_surface_rectangle = score_message_surface.get_rect(center=(WIDTH/2, 580))
+        score_message_surface_rectangle = score_message_surface.get_rect(center=(WIDTH/2, int(80.56 * HEIGHT / 100)))
         screen.blit(game_name_surface, game_name_surface_rectangle)
 
         if score == 0:
             screen.blit(game_message_surface, game_message_surface_rectangle)
         else:
-            game_message_surface = font.render(f'Press "SPACE" to restart', False, '#66ccaa')
+            game_message_surface = font.render(f'Press  "SPACE"  to  RESTART  or  "ESC"  to  exit!', False, '#66ccaa')
             game_message_surface_rectangle = game_message_surface.get_rect(center=(WIDTH/2, int(91.67 * HEIGHT / 100)))
             screen.blit(score_message_surface, score_message_surface_rectangle)
             screen.blit(game_message_surface, game_message_surface_rectangle)
