@@ -6,6 +6,29 @@ WIDTH = 1920
 HEIGHT = 1080
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('graphics/player/player_walk_1.png')
+        self.rect = self.image.get_rect(midbottom=(int(20 * WIDTH / 100), int(66.67 * HEIGHT / 100)))
+        self.gravity = 0
+
+    def player_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and self.rect.bottom >= int(66.67 * HEIGHT / 100):
+            self.gravity = -20
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= int(66.67 * HEIGHT / 100):
+            self.rect.bottom = int(66.67 * HEIGHT / 100)
+
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+
+
 def display_score():
     current_time = (int(pygame.time.get_ticks() / 1000) - start_time)
     score_surface = font.render(f'Score:  {current_time}', False, '#444444')
@@ -31,10 +54,10 @@ def enemies_movement(enemies_rect):
         return []
 
 
-def collisions(player, enemies_rect):
+def collisions(my_player, enemies_rect):
     if enemies_rect:
         for enemy_rectangle in enemies_rect:
-            if player.colliderect(enemy_rectangle):
+            if my_player.colliderect(enemy_rectangle):
                 return False
     return True
 
@@ -58,6 +81,9 @@ font = pygame.font.Font('font/pixeltype.ttf', 64)
 game_active = False
 start_time = 0
 score = 0
+
+player = pygame.sprite.GroupSingle()
+player.add(Player())
 
 # Load scene images
 if WIDTH == 1280:
@@ -93,7 +119,7 @@ player_index = 0
 player_jump = pygame.image.load('graphics/player/player_jump.png').convert_alpha()
 
 player_surface = player_walk[player_index]
-player_rectangle = player_surface.get_rect(midbottom=(120, int(66.67 * HEIGHT / 100)))
+player_rectangle = player_surface.get_rect(midbottom=(int(9.375 * WIDTH / 100), int(66.67 * HEIGHT / 100)))
 player_gravity = 0
 
 # Intro screen
@@ -131,13 +157,10 @@ while True:
                 exit()
 
         if game_active:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if player_rectangle.collidepoint(event.pos) and player_rectangle.bottom >= int(66.67 * HEIGHT / 100):
-                    player_gravity = -25
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and player_rectangle.bottom >= int(66.67 * HEIGHT / 100):
-                    player_gravity = -25
+                    player_gravity = -20
 
             if event.type == obstacle_timer:
                 if randint(0, 2):
@@ -177,6 +200,8 @@ while True:
             player_rectangle.bottom = int(66.67 * HEIGHT / 100)
         player_animation()
         screen.blit(player_surface, player_rectangle)
+        player.draw(screen)
+        player.update()
 
         # Enemies movement
         enemies_rectangle_list = enemies_movement(enemies_rectangle_list)
